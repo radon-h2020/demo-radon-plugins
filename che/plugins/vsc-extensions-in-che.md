@@ -42,14 +42,14 @@ First, let's edit the object *contributes* in **pakage.json** in the following w
    "editor/context": [
      {
        "when": "resourceLangId == yaml",
-       "command": "extension.helloWorld",
+       "command": "helloworld.helloWorld",
        "group": "myGroup@1"
      }
    ]
  },
  "commands": [
    {
-     "command": "extension.helloWorld",
+     "command": "helloworld.helloWorld",
      "title": "Say hello"
    }
  ]
@@ -59,14 +59,13 @@ First, let's edit the object *contributes* in **pakage.json** in the following w
 The list "commands" maps the commands executable by the plug-in (e.g. to say hello, to check typos in the code, etc.).
 Let's focus on the "menus" object.
 It specifies how the commands can be accessed through the user interface.
-In this case we defined an "editor/context" which means that the command will be find among the menu items when right-clicking on the window (more can be found [here](https://code.visualstudio.com/api/references/contribution-points#contributes.menus))
+In this case we defined an "editor/context" which means that the command will be find among the menu items when right-clicking on the window (more can be found [here](https://code.visualstudio.com/api/references/contribution-points#contributes.menus)).
+
 Here
 
-* ```"when": "resourceLangId == yaml"``` applies to menus and enablement clauses to command only when the file extension is .yaml;
-* ```"command": "extension.helloWorld"``` maps the action to execute, implemented in **extension.ts**; 
+* ```"when": "resourceLangId == yaml"``` applies to menus only when the file extension is .yaml;
+* ```"command": "helloworld.helloWorld"``` maps the action to execute, implemented in **extension.ts**; 
 * ```"group": "myGroup@1"``` indicates where to show the menu item within the context menu (see [here](https://code.visualstudio.com/api/references/contribution-points#Sorting-of-groups)).
-
-**Note:** I do not have yet figure out the actual meaning of "myGroup" and how to properly use it. Will work on it.
 
 We can now modify the **extension.ts**. For the sake of simplicity let's just pop-up a message.
 
@@ -79,7 +78,7 @@ import * as vscode from 'vscode';
 
 export function activate(context: vscode.ExtensionContext) {
 
-  let disposable = vscode.commands.registerCommand('extension.helloWorld', () => {
+  let disposable = vscode.commands.registerCommand('helloworld.helloWorld', () => {
     vscode.window.showInformationMessage('Hello by RADON!')
     // vscode.window.showWarningMessage('ALT! This is a warning')
     // vscode.window.showErrorMessage('ERROR! Something wrong with your code?')
@@ -101,7 +100,7 @@ import { readFileSync } from 'fs';
 
 export function activate(context: vscode.ExtensionContext) {
   
-  let disposable = vscode.commands.registerCommand('extension.helloWorld', () => {
+  let disposable = vscode.commands.registerCommand('helloworld.helloWorld', () => {
   
      if (vscode.window.activeTextEditor) {
   
@@ -111,7 +110,7 @@ export function activate(context: vscode.ExtensionContext) {
        vscode.window.showInformationMessage(`Click on ${currentDocument.uri.path}`)
        vscode.window.showInformationMessage(`Content: ${content}`)
        
-       // At this point you can also use the content to make an RESTful call
+       // At this point you can also use the content to make a RESTful call
        // and print the reponse, instead
   });
   
@@ -123,9 +122,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 ## Integrate the extension in Eclipse Che
 
-* in the ./helloworld run ```vsce package```
-* move the helloworld.vsix in radon-plugin-registry/radon/examples/helloworld (commit changes)
-* create a file called *meta.yaml* in the radon-plugin-registry/radon/examples (commit changes)
+* in the ./helloworld run ```vsce package``` (see https://code.visualstudio.com/api/working-with-extensions/publishing-extension#vsce). This will generate a package called *helloworld-0.0.1.vsix*
+* move *helloworld-0.0.1.vsix* in the repository radon-plugin-registry/radon/examples/helloworld (commit changes)
+* add the following *meta.yaml* in radon-plugin-registry/radon/examples/helloworld (commit changes)
 
 ```yaml
 apiVersion: v2
@@ -141,7 +140,7 @@ repository: https://github.com/radon-h2020/radon-defect-prediction-plugin
 category: Other
 spec:
   extensions:
-    - https://raw.githubusercontent.com/radon-h2020/radon-plugin-registry/master/radon/examples/helloworld/helloworld.vsix
+    - https://raw.githubusercontent.com/radon-h2020/radon-plugin-registry/master/radon/examples/helloworld/helloworld-0.0.1.vsix
 
 ```
 
@@ -152,7 +151,7 @@ spec:
 components:
   - type: chePlugin
     reference: >-
-      https://raw.githubusercontent.com/radon-h2020/radon-plugin-registry/master/radon/helloworld/meta.yaml
+      https://raw.githubusercontent.com/radon-h2020/radon-plugin-registry/master/radon/examples/helloworld/meta.yaml
 ```
 
 * Open the workspace
@@ -160,8 +159,20 @@ components:
 * Righ-click on the file window: you should be able to see the new voice "Say hello" in the context menu. Click it to activat the plugin. 
 ###
 
+
+An implemented example of plugin can be found in this [repo](https://github.com/radon-h2020/radon-examples/tree/master/che/plugins/helloworld).
+
+The extension package and the meta file are in the [radon-plugin-registry](https://github.com/radon-h2020/radon-plugin-registry/tree/master/radon/examples/helloworld).
+
+
 ## Further references
 
-How to integrate VSC extensions in Che
-https://www.eclipse.org/che/docs/che-7/using-a-visual-studio-code-extension-in-che/#publishing-a-vs-code-extension-into-the-che-plug-in-registry_using-a-visual-studio-code-extension-in-che [Text]
-https://www.youtube.com/watch?v=FwiOnC8Zkqs [Video min 01:00 to 18:00]
+*How to integrate VSC extensions in Che*
+
+* https://www.eclipse.org/che/docs/che-7/using-a-visual-studio-code-extension-in-che/#publishing-a-vs-code-extension-into-the-che-plug-in-registry_using-a-visual-studio-code-extension-in-che [Text]
+
+* https://www.youtube.com/watch?v=FwiOnC8Zkqs [Video min 01:00 to 18:00]
+
+*What else can I do beside context menu?*
+
+* https://code.visualstudio.com/api/references/contribution-points
