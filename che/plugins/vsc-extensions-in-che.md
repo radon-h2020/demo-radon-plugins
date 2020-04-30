@@ -160,7 +160,7 @@ components:
 ###
 
 
-An implemented example of plugin can be found in this [repo](https://github.com/radon-h2020/radon-examples/tree/master/che/plugins/helloworld).
+An implemented example of plugin can be found in this [repo](https://github.com/radon-h2020/demo-radon-plugins/tree/master/che/plugins/helloworld).
 
 The extension package and the meta file are in the [radon-plugin-registry](https://github.com/radon-h2020/radon-plugin-registry/tree/master/radon/examples/helloworld).
 
